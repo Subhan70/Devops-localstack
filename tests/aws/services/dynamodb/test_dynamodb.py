@@ -125,7 +125,7 @@ class TestDynamoDB:
         url = f"{config.internal_service_url()}/_aws/dynamodb/expired"
         response = requests.delete(url)
         assert response.status_code == 200
-        assert response.json() == {"ExpiredItems": 1}
+        assert response.text == '{"ExpiredItems": 1}'
 
         result = aws_client.dynamodb.get_item(
             TableName=table_name, Key={PARTITION_KEY: {"S": "not-expired"}}

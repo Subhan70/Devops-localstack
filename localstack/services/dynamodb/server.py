@@ -165,7 +165,7 @@ class DynamodbServer(Server):
         t.start()
         return t
 
-    def check_dynamodb(self, expect_shutdown: bool = False, print_error: bool = False) -> None:
+    def check_dynamodb(self, expect_shutdown: bool = False) -> None:
         """Checks if DynamoDB server is up"""
         out = None
 
@@ -173,12 +173,11 @@ class DynamodbServer(Server):
             self.wait_is_up()
             out = connect_externally_to(endpoint_url=self.url).dynamodb.list_tables()
         except Exception:
-            if print_error:
-                LOG.exception("DynamoDB health check failed")
+            LOG.exception("DynamoDB health check failed")
         if expect_shutdown:
             assert out is None
         else:
             assert isinstance(out["TableNames"], list)
 
     def wait_for_dynamodb(self) -> None:
-        retry(self.check_dynamodb, sleep=0.4, retries=10)
+        retry(self.check_dynamodb, sleep=0.5, retries=20)
